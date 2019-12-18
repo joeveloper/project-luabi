@@ -1,50 +1,41 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { fetchPosts } from "./actions/posts";
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {fetchPosts, deletePost} from './actions/posts'
+import {Link} from 'react-router-dom'
 
 class Posts extends Component {
-  constructor() {
-    super();
+  UNSAFE_componentWillMount(){
+    this.props.fetchPosts()
   }
-  UNSAFE_componentWillMount() {
-    this.props.fetchPosts();
+  handleClick = (e)=>{
+    this.props.deletePost({id:e.target.id})
   }
-  handleClick = e => {
-    console.log(e.target.id);
-  };
-  render() {
-    const posts = this.props.posts.map((post, key) => {
-      let no = 0;
-      const { _id, title, content } = post;
-      no++;
-      return (
+  render(){
+    let no = 0;
+    const posts = this.props.posts.map((post, key)=>{
+      no++
+      const {_id, title, content} = post
+      return(
         <div key={key}>
-          <h2>
-            {no}
-            {title}
-          </h2>
+          <h2>{no} <Link to={`/UpdatePost/${_id}`}>{title}</Link></h2>
           <p>{content}</p>
-          <p>
-            <button onClick={this.handleClick} id={_id}>
-              delete
-            </button>
-          </p>
+          <p><button onClick={this.handleClick} id={_id}>delete</button></p>
         </div>
-      );
-    });
-    return (
+      )
+    })
+    return(
       <div>
         <h2>Fetch Posts</h2>
         {posts}
       </div>
-    );
+    )
   }
 }
 
-const mapStateToProps = state => {
-  return {
+const mapStateToProps = (state)=>{
+  return{
     posts: state.postsReducer.posts
-  };
-};
+  }
+}
 
-export default connect(mapStateToProps, { fetchPosts })(Posts);
+export default connect(mapStateToProps, {fetchPosts, deletePost})(Posts)
